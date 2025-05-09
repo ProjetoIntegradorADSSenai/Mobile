@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     justifyContent: "flex-end",
-    paddingBottom: 40,
+    paddingBottom: 20,
     paddingHorizontal: 10,
   },
   linhaBotoes: {
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   linhaBotaoAtuador: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   botao: {
     flex: 1,
