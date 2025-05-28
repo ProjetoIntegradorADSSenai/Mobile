@@ -9,16 +9,25 @@ export default function Layout() {
           let iconName;
 
           if (route.name === 'index') {
-            iconName = 'home';
+            iconName = 'log-in';
           } else if (route.name === 'control') {
             iconName = 'settings';
           } else if (route.name === 'dashboard') {
             iconName = 'analytics';
-          } else if (route.name === 'login') {
-            iconName = 'log-in';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarStyle: {
+          backgroundColor: '#25292e',
+        },
+        tabBarActiveTintColor: '#fff', 
+        tabBarInactiveTintColor: '#aaa', 
+        headerStyle: {
+          backgroundColor: '#25292e',
+        },
+        headerTitleStyle: {
+          color: '#fff',
         },
       })}
     >

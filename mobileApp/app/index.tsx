@@ -1,18 +1,11 @@
-import { Text, View,  StyleSheet} from "react-native";
+import { useState } from 'react';
+import LoginPage from './login';
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text></Text>
-    </View>
-  );
-}
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    paddingBottom: 20,
-    paddingHorizontal: 10,
-  },
-});
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+}

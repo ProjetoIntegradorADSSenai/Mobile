@@ -21,11 +21,11 @@ export default function Control() {
   const cardData = [
     { title: "Sensor 1", value: "Ativo" },
     { title: "Sensor 2", value: "Ativo" },
-    { title: "Sensor 3", value: "Desativo" },
+    { title: "Sensor 3", value: "Desativado" },
     { title: "Sensor 4", value: "Ativo" },
     { title: "Sensor 5", value: "Ativo" },
     { title: "Sensor 6", value: "Ativo" },
-    { title: "Sensor 7", value: "Desativo" },
+    { title: "Sensor 7", value: "Desativado" },
   ];
 
   return (
@@ -34,12 +34,18 @@ export default function Control() {
         const items = cardData.slice(rowIndex * 2, rowIndex * 2 + 2);
         return (
           <View style={styles.cardsContainer} key={rowIndex}>
-            {items.map((item, index) => (
-              <View style={styles.card} key={index}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-                <Text style={styles.cardValue}>{item.value}</Text>
-              </View>
-            ))}
+          {items.map((item, index) => (
+          <View
+            style={[
+              styles.card,
+              item.value === "Ativo" ? styles.cardAtivo : styles.cardDesativado,
+            ]}
+            key={index}
+          >
+            <Text style={styles.cardTitle}>{item.title}</Text>
+            <Text style={styles.cardValue}>{item.value}</Text>
+          </View>
+        ))}
           </View>
         );
       })}
@@ -174,8 +180,8 @@ const styles = StyleSheet.create({
   cardsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
   card: {
     backgroundColor: "#3a3f47",
@@ -183,10 +189,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     width: 150,
+    height: 80,
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+  },
+  cardAtivo: {
+    backgroundColor: "#008000",
+  },
+  cardDesativado: {
+    backgroundColor: "#800000",
   },
   cardTitle: {
     color: "#ccc",

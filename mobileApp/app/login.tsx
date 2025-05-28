@@ -1,34 +1,41 @@
-import { useState } from 'react';
-import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, Button, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { useGithubAuth } from "@/auth/githubLogin";
+import { useEffect } from "react";
+import { useRouter } from 'expo-router';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+type LoginPageProps = {
+  onLogin: (accessToken: string) => void;
+};
+
+export default function LoginPage({ onLogin }: LoginPageProps) {
+  const { promptAsync, response } = useGithubAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const code = response.params.code;
+      onLogin(code);
+      router.push('/(tabs)/control');  // ou '/(tabs)/control' conforme sua config
+    } else if (response?.type === 'error') {
+      Alert.alert('Erro ao fazer login');
+    }
+  }, [response]);
+
+  const handleGithubLogin = async () => {
+    const result = await promptAsync();
+    if (result.type === 'dismiss') {
+      Alert.alert('Login cancelado');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      
+
       <Button
-        title="Entrar"
-        color="#007bff"
+        title="Entrar com GitHub"
+        color="#333"
+        onPress={handleGithubLogin}
       />
 
       <TouchableOpacity style={styles.signUpButton}>
@@ -51,15 +58,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     color: '#ffffff',
-  },
-  input: {
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
   },
   signUpButton: {
     marginTop: 20,
