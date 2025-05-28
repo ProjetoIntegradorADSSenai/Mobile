@@ -1,5 +1,10 @@
 {
   "dependencies": {
     "recharts": "^2.15.3"
+  },
+  "scripts": {
+  "start": "expo start",
+  "android": "expo start --android",
+  "ios": "expo start --ios"
   }
 }
