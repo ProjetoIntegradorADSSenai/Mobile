@@ -1,4 +1,4 @@
-import { Text, View, Button, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert, Linking } from "react-native";
 import { useGithubAuth } from "@/auth/githubLogin";
 import { useEffect } from "react";
 import { useRouter } from 'expo-router';
@@ -15,7 +15,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     if (response?.type === 'success') {
       const code = response.params.code;
       onLogin(code);
-      router.push('/(tabs)/control');  // ou '/(tabs)/control' conforme sua config
+      router.push('/(tabs)/control'); 
     } else if (response?.type === 'error') {
       Alert.alert('Erro ao fazer login');
     }
@@ -28,17 +28,20 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     }
   };
 
+  const handleSignUp = () => {
+    Linking.openURL('https://github.com/signup');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Bem-vindo</Text>
+      <Text style={styles.subtitle}>Acesse com sua conta do GitHub</Text>
 
-      <Button
-        title="Entrar com GitHub"
-        color="#333"
-        onPress={handleGithubLogin}
-      />
+      <TouchableOpacity style={styles.loginButton} onPress={handleGithubLogin}>
+        <Text style={styles.loginButtonText}>Entrar com GitHub</Text>
+      </TouchableOpacity>
 
-      <TouchableOpacity style={styles.signUpButton}>
+      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpText}>Não tem conta? Cadastre-se</Text>
       </TouchableOpacity>
     </View>
@@ -48,23 +51,41 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1a1a1a',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#25292e',
+    alignItems: 'center',
+    padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 30,
-    color: '#ffffff',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#aaa',
+    marginBottom: 40,
+  },
+  loginButton: {
+    backgroundColor: '#333',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 30,
+    marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   signUpButton: {
-    marginTop: 20,
-    alignItems: 'center',
+    marginTop: 10,
   },
   signUpText: {
     color: '#007bff',
-    fontSize: 16,
+    fontSize: 14,
   },
 });
