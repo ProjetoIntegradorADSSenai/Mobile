@@ -91,7 +91,7 @@ export default function Control() {
           onPress={() => toggleButton("liga")}
           style={[styles.botao, ligaAtivo ? styles.ativoLiga : styles.inativo]}
         >
-          <Text style={styles.textoBotao}>Liga</Text>
+          <Text style={styles.textoBotao}>Ligar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -7,28 +7,23 @@ const discovery = {
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
 };
 
-const redirectUri = AuthSession.makeRedirectUri({
-  scheme: 'myapp',
-  path: 'control'
-});
-console.log('Redirect URI gerado:', redirectUri);
-
-
-
-const GITHUB_CLIENT_ID = Constants.expoConfig?.extra?.githubClientId ?? Constants.manifest?.extra?.githubClientId;
-
-if (!GITHUB_CLIENT_ID) {
-  throw new Error("GITHUB_CLIENT_ID não configurado corretamente.");
-}
-
 export function useGithubAuth() {
-
   const isExpoGo = Constants.appOwnership === 'expo';
 
   const redirectUri = AuthSession.makeRedirectUri({
     scheme: isExpoGo ? 'expo' : 'myapp',
-    path: 'control'
+    path: 'control', 
   });
+
+  console.log('Redirect URI gerado:', redirectUri);
+
+  const GITHUB_CLIENT_ID = 
+    Constants.expoConfig?.extra?.githubClientId ??
+    Constants.manifest?.extra?.githubClientId;
+
+  if (!GITHUB_CLIENT_ID) {
+    throw new Error("GITHUB_CLIENT_ID não configurado corretamente.");
+  }
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -42,12 +37,13 @@ export function useGithubAuth() {
   React.useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
-      console.log('Authorization Code:', code);
+      console.log('Authorization Code recebido:', code);
     }
   }, [response]);
 
   return {
     promptAsync,
     response,
+    request,
   };
 }
