@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Dimensions, StyleSheet, Platform, ScrollView, Text } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import TableChart from './TableChart';
 
-const RecyclingCharts = () => {
+const Charts = () => {
   const screenWidth = Dimensions.get('window').width;
 
   // Gráfico 1: Eficiência na Separação de Materiais (Antes e Depois da Automação)
@@ -10,7 +11,7 @@ const RecyclingCharts = () => {
     labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
     datasets: [
       {
-        data: [62, 65, 63, 67, 68, 92], // Salto após implementação em Junho
+        data: [0, 15, 40, 65, 70, 90], // Salto após implementação em Junho
         strokeWidth: 3,
         color: (opacity = 1) => `rgba(100, 210, 255, ${opacity})`,
       },
@@ -22,7 +23,7 @@ const RecyclingCharts = () => {
     labels: ['Q1', 'Q2', 'Q3', 'Q4'],
     datasets: [
       {
-        data: [18, 15, 12, 5], // Redução progressiva
+        data: [30, 12, 8, 2.5], // Redução progressiva
         strokeWidth: 3,
         color: (opacity = 1) => `rgba(76, 217, 100, ${opacity})`, // Verde
       },
@@ -31,10 +32,10 @@ const RecyclingCharts = () => {
 
   // Gráfico 3: Custo Operacional por Tonelada Processada
   const operationalCostData = {
-    labels: ['2020', '2021', '2022', '2023'],
+    labels: ['2020', '2021', '2022', '2023', '2024'],
     datasets: [
       {
-        data: [420, 390, 375, 310], // Redução após automação
+        data: [420, 390, 275, 180, 125], // Redução após automação
         strokeWidth: 3,
         color: (opacity = 1) => `rgba(255, 149, 0, ${opacity})`, // Laranja
       },
@@ -88,7 +89,6 @@ const RecyclingCharts = () => {
         withInnerLines={true}
         withOuterLines={false}
         fromZero={true}
-        bezier={true}
         withHorizontalLabels={true}
         withVerticalLabels={true}
         withShadow={false}
@@ -97,18 +97,35 @@ const RecyclingCharts = () => {
         style={styles.chartStyle}
       />
       <Text style={styles.chartSubtitle}>
-        {title.includes('Eficiência') ? 'Implementação do sistema em Junho' : 
+        {title.includes('Eficiência') ? 'Implementação do sistema em Janeiro' : 
          title.includes('Contaminação') ? 'Redução após automação' : 
          'Economia progressiva pós-automação'}
       </Text>
     </View>
   );
 
+  const piecesDataWithTime = [
+  ['2025-05-30 08:00', 10, 12],
+  ['2025-05-30 09:00', 11, 13],
+  ['2025-05-30 10:00', 12, 11],
+  ['2025-05-30 11:00', 13, 15],
+  ['2025-05-30 12:00', 14, 10],
+  ['2025-05-30 13:00', 15, 14],
+  ['2025-05-30 14:00', 10, 13],
+  ['2025-05-30 15:00', 12, 15],
+  ['2025-05-30 16:00', 13, 12],
+  ['2025-05-30 17:00', 14, 11],
+];
+
+
   return (
     <ScrollView style={styles.scrollContainer}>
       {renderChart(separationEfficiencyData, '#64D2FF', 'Eficiência na Separação (%)', '%')}
       {renderChart(contaminationData, '#4CD964', 'Contaminação Metálica (kg/ton)', 'kg')}
       {renderChart(operationalCostData, '#FF9500', 'Custo Operacional (R$/ton)', 'R$')}
+      <View style={styles.tableContainer}>
+        <TableChart title={'Quantidade de peças'} headers={["Horário","Metal","Plástico"]} data={piecesDataWithTime}/>
+      </View>
     </ScrollView>
   );
 };
@@ -123,6 +140,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 24,
     paddingVertical: 16,
+    justifyContent: 'center',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -157,6 +175,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignSelf: 'center',
   },
+  tableContainer: {
+    alignItems: 'center',
+    width: '100%',
+  },
 });
 
-export default RecyclingCharts;
+export default Charts;
