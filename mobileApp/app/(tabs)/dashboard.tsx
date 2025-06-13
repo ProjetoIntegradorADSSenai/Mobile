@@ -1,9 +1,7 @@
 import { Text, View, StyleSheet } from 'react-native';
-import ChartTest from '@/components/Charts';
-import TableChart from '@/components/TableChart';
 import Charts from '@/components/Charts';
 
-export default function AboutScreen() {
+export default function Dashboards() {
   return (
     <View style={styles.container}>
       <Charts />

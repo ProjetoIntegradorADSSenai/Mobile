@@ -8,12 +8,14 @@ export default function Layout() {
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
-          if (route.name === 'index') {
-            iconName = 'log-in';
-          } else if (route.name === 'control') {
+          if (route.name === 'control') {
             iconName = 'settings';
           } else if (route.name === 'dashboard') {
             iconName = 'analytics';
+          } else if (route.name === 'about') {
+            iconName = 'person-circle';
+          } else if (route.name === 'members') {
+            iconName = 'people-circle';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -31,10 +33,11 @@ export default function Layout() {
         },
       })}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="control" options={{ title: 'Control' }} />
       <Tabs.Screen name="dashboard" options={{ title: 'Dashboards' }} />
-      <Tabs.Screen name="login" options={{ title: 'Login' }} />
+      <Tabs.Screen name="about" options={{ title: 'User' }} />
+      <Tabs.Screen name="members" options={{ title: 'Members' }} />
+
     </Tabs>
   );
 }
