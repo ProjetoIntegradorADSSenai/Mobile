@@ -65,7 +65,8 @@ const Charts = () => {
             minute: '2-digit',
           });
           return [formattedTime, metal, plastico, lixo] as [string, number, number, number];
-        });
+        })
+        .slice(-6);
 
       setMetalData(tempMetal);
       setPlasticData(tempPlastic);
