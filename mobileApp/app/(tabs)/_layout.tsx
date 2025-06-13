@@ -16,6 +16,8 @@ export default function Layout() {
             iconName = 'person-circle';
           } else if (route.name === 'members') {
             iconName = 'people-circle';
+          } else if (route.name === 'chatbot') {
+            iconName = 'chatbubble';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -35,6 +37,7 @@ export default function Layout() {
     >
       <Tabs.Screen name="control" options={{ title: 'Control' }} />
       <Tabs.Screen name="dashboard" options={{ title: 'Dashboards' }} />
+      <Tabs.Screen name="chatbot" options={{ title: 'Chatbot' }} />
       <Tabs.Screen name="about" options={{ title: 'User' }} />
       <Tabs.Screen name="members" options={{ title: 'Members' }} />
 
