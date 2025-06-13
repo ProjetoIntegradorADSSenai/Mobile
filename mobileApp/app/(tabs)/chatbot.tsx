@@ -1,141 +1,127 @@
-import { Text, View, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import axios from 'axios';
 
-const members = [
-  {
-    image: require('../../assets/images/members/felipe.jpeg'),
-    name: 'Felipe Marques',
-    role: 'Desenvolvedor CLP e Front-end',
-    contribution: 'Programação do sistema de automação do CLP e integração do Next Auth.',
-  },
-  {
-    image: require('../../assets/images/members/gabriel.jpeg'),
-    name: 'Gabriel Ribeiro',
-    role: 'Desenvolvedor front e back-end',
-    contribution: 'Desenvolvimento da interface do usuário e integração com a API.',
-  },
-  {
-    image: require('../../assets/images/members/luciano.jpeg'),
-    name: 'Luciano',
-    role: 'Arquiteto de Banco de Dados',
-    contribution: 'Estrutura do banco de dados e relacionamento entre tabelas.',
-  },
-  {
-    image: require('../../assets/images/members/giovani.jpeg'),
-    name: 'Giovani',
-    role: 'Metodologia Científica',
-    contribution: 'Desenvolvimento do artigo e metodologia científica do projeto.',
-  },
-  {
-    image: require('../../assets/images/members/faria.png'),
-    name: 'Gabriel Faria',
-    role: 'Arquiteto Cloud e Back-end',
-    contribution: 'API em Flask, refatoração para AWS Lambda (get e post). Desenvolvimento da arquitetura AWS.',
-  },
-  {
-    image: require('../../assets/images/members/camargo.png'),
-    name: 'Guilherme Camargo',
-    role: 'Desenvolvedor Cloud e Banco de Dados',
-    contribution: 'API Gateway para integração com Lambda e MySQL no AWS RDS',
-  },
-  {
-    image: require('../../assets/images/members/kaneda.png'),
-    name: 'Guilherme Kaneda',
-    role: 'Desenvolvedor CLP e Back-end',
-    contribution: 'Conexão do CLP com o node red via OPC UA, o qual converte os dados para um POST na API hospedada na AWS Lambda.',
-  },
-  {
-    image: require('../../assets/images/members/tomas.jpeg'),
-    name: 'Thomas',
-    role: 'Desenvolvedor Mobile',
-    contribution: 'Desenvolvimento mobile em Expo.',
-  },
-  {
-    image: require('../../assets/images/members/joao.jpeg'),
-    name: 'João',
-    role: 'Desenvolvedor Mobile e integração',
-    contribution: 'Desenvolvimento mobile em Expo.',
-  },
-];
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+}
 
-export default function About() {
+export default function ChatScreen() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: input,
+      sender: 'user',
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+
+    try {
+      const response = await axios.post('https://r4ft7y62fg.execute-api.us-east-1.amazonaws.com/chatbot', {
+        prompt: input,
+      });
+
+      const botMessage: Message = {
+        id: Date.now().toString() + '-bot',
+        text: response.data.response,
+        sender: 'bot',
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (err) {
+      console.log(err);
+      const errorMessage: Message = {
+        id: Date.now().toString() + '-error',
+        text: 'Erro ao se comunicar com o chatbot.',
+        sender: 'bot',
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+  };
+
+  const renderMessage = ({ item }: { item: Message }) => (
+    <View style={[styles.messageContainer, item.sender === 'user' ? styles.userMsg : styles.botMsg]}>
+      <Text style={styles.messageText}>{item.text}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Nossa equipe</Text>
-      <Text style={styles.subtitle}>Os talentos por trás da inovação tecnológica</Text>
-      <View style={styles.grid}>
-        {members.map((member, index) => (
-          <View key={index} style={styles.card}>
-            <Image source={member.image} style={styles.image} />
-            <Text style={styles.name}>{member.name}</Text>
-            <Text style={styles.role}>{member.role}</Text>
-            <Text style={styles.contribution}>{member.contribution}</Text>
-          </View>
-        ))}
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.container}>
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item.id}
+        renderItem={renderMessage}
+        contentContainerStyle={styles.messagesList}
+      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite sua mensagem..."
+          value={input}
+          onChangeText={setInput}
+        />
+        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+          <Text style={{ color: 'white' }}>Enviar</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
-    backgroundColor: '#25292e',
-    alignItems: 'center',
+    flex: 1,
+    backgroundColor: '#1A1D21',
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    width: '100%',
-    maxWidth: 400,
+  messagesList: {
+    padding: 10,
   },
-  card: {
-    width: 110,
-    margin: 10,
-    backgroundColor: '#2f3136',
-    borderRadius: 10,
-    padding: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
+  messageContainer: {
+    maxWidth: '75%',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 15,
   },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 6,
+  userMsg: {
+    backgroundColor: '#DCF8C6',
+    alignSelf: 'flex-end',
   },
-  name: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 13,
-    textAlign: 'center',
-    marginBottom: 2,
+  botMsg: {
+    backgroundColor: '#E2E2E2',
+    alignSelf: 'flex-start',
   },
-  role: {
-    color: '#ccc',
-    fontSize: 11,
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  contribution: {
-    color: '#aaa',
-    fontSize: 10,
-    textAlign: 'center',
-  },
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    color: '#ccc',
+  messageText: {
     fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    borderTopColor: '#DDD',
+    borderTopWidth: 1,
+    backgroundColor: '#2c2f38',
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: '#DDD',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginRight: 10,
+    backgroundColor: '#FFF',
+  },
+  sendButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
   },
 });
