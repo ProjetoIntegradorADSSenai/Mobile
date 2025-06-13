@@ -1,10 +1,68 @@
-import React from 'react';
 import { View, Dimensions, StyleSheet, Platform, ScrollView, Text } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import TableChart from './TableChart';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface Data {
+  peca_tipo: string;
+  time_interval: string;
+  date: string,
+  time: string,
+  total_separacoes: number
+}
+
+interface ChartData {
+  labels: string[],
+  datasets: [
+    {
+      data: number[],
+      strokeWidth: 3,
+      color: `rgba(100, 210, 255, 1)`,
+    },
+  ],
+}
 
 const Charts = () => {
   const screenWidth = Dimensions.get('window').width;
+  const [plasticData, setPlasticData] = useState<Data[] | null>(null);
+  const [metalData, setMetalData] = useState<Data[] | null>(null);
+  const [scrapData, setScrapData] = useState<Data[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await axios.get('https://r4ft7y62fg.execute-api.us-east-1.amazonaws.com/');
+      var tempMetal = [];
+      var tempPlastic = [];
+      var tempScrap = [];
+      response.data.map((x:Data[]) => {
+        x.map((d:Data) => {
+          if(d.peca_tipo == 'metal') {
+            tempMetal.push(d);
+          } else if(d.peca_tipo == 'plastico') {
+            tempPlastic.push(d);
+          } else if(d.peca_tipo == 'lixo') {
+            tempScrap.push(d);
+          }
+        });
+      });
+      setPlasticData(tempPlastic);
+      setMetalData(tempMetal);
+      setScrapData(tempScrap);
+
+    } catch (error) {
+      console.error("Erro ao buscar comentários:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Gráfico 1: Eficiência na Separação de Materiais (Antes e Depois da Automação)
   const separationEfficiencyData = {
