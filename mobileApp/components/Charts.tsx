@@ -1,4 +1,4 @@
-import { View, Dimensions, StyleSheet, Platform, ScrollView, Text, ActivityIndicator } from 'react-native';
+import { View, Dimensions, StyleSheet, Platform, ScrollView, Text, ActivityIndicator, RefreshControl } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import TableChart from './TableChart';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ const Charts = () => {
   const [metalData, setMetalData] = useState<Data[] | null>(null);
   const [scrapData, setScrapData] = useState<Data[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [piecesDataWithTime, setPiecesDataWithTime] = useState<[string, number, number, number][]>([]);
 
   useEffect(() => {
@@ -80,6 +81,11 @@ const Charts = () => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
 
   // Gráfico 1: Separação de peças metálicas
   const metalSeparationChart = {
@@ -189,7 +195,17 @@ const Charts = () => {
   }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
+    <ScrollView 
+      style={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#64D2FF']}
+          tintColor="#64D2FF" 
+        />
+      }
+    >
       {renderChart(metalSeparationChart, '#64D2FF', 'Peças Metálicas / Hora', 'un')}
       {renderChart(plasticSeparationChart, '#4CD964', 'Peças Plásticas / Hora', 'un')}
       {renderChart(scrapSeparationChart, '#FF9500', 'Peças para Descarte / Hora', 'un')}
