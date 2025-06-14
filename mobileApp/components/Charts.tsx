@@ -144,7 +144,7 @@ const Charts = () => {
       </View>
       <LineChart
         data={data}
-        width={screenWidth * 0.85}
+        width={screenWidth * 0.75}
         height={220}
         chartConfig={{
           ...chartConfig,
