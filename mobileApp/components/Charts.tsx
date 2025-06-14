@@ -13,7 +13,7 @@ interface Data {
 }
 
 const Charts = () => {
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Math.max(Dimensions.get('window').width, 320);
   const [plasticData, setPlasticData] = useState<Data[] | null>(null);
   const [metalData, setMetalData] = useState<Data[] | null>(null);
   const [scrapData, setScrapData] = useState<Data[] | null>(null);
