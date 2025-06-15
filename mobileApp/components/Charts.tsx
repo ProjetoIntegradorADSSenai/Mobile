@@ -1,4 +1,4 @@
-import { View, Dimensions, StyleSheet, Platform, ScrollView, Text, ActivityIndicator } from 'react-native';
+import { View, Dimensions, StyleSheet, Platform, ScrollView, Text, ActivityIndicator, RefreshControl } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import TableChart from './TableChart';
 import React, { useEffect, useState } from 'react';
@@ -13,11 +13,12 @@ interface Data {
 }
 
 const Charts = () => {
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Math.max(Dimensions.get('window').width, 320);
   const [plasticData, setPlasticData] = useState<Data[] | null>(null);
   const [metalData, setMetalData] = useState<Data[] | null>(null);
   const [scrapData, setScrapData] = useState<Data[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [piecesDataWithTime, setPiecesDataWithTime] = useState<[string, number, number, number][]>([]);
 
   useEffect(() => {
@@ -80,6 +81,11 @@ const Charts = () => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
 
   // Gráfico 1: Separação de peças metálicas
   const metalSeparationChart = {
@@ -144,7 +150,7 @@ const Charts = () => {
       </View>
       <LineChart
         data={data}
-        width={screenWidth * 0.85}
+        width={screenWidth * 0.75}
         height={220}
         chartConfig={{
           ...chartConfig,
@@ -189,7 +195,17 @@ const Charts = () => {
   }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
+    <ScrollView 
+      style={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#64D2FF']}
+          tintColor="#64D2FF" 
+        />
+      }
+    >
       {renderChart(metalSeparationChart, '#64D2FF', 'Peças Metálicas / Hora', 'un')}
       {renderChart(plasticSeparationChart, '#4CD964', 'Peças Plásticas / Hora', 'un')}
       {renderChart(scrapSeparationChart, '#FF9500', 'Peças para Descarte / Hora', 'un')}

@@ -12,8 +12,6 @@ export default function Layout() {
             iconName = 'settings';
           } else if (route.name === 'dashboard') {
             iconName = 'analytics';
-          } else if (route.name === 'about') {
-            iconName = 'person-circle';
           } else if (route.name === 'members') {
             iconName = 'people-circle';
           } else if (route.name === 'chatbot') {
@@ -38,7 +36,6 @@ export default function Layout() {
       <Tabs.Screen name="control" options={{ title: 'Control' }} />
       <Tabs.Screen name="dashboard" options={{ title: 'Dashboards' }} />
       <Tabs.Screen name="chatbot" options={{ title: 'Chatbot' }} />
-      <Tabs.Screen name="about" options={{ title: 'User' }} />
       <Tabs.Screen name="members" options={{ title: 'Members' }} />
 
     </Tabs>
