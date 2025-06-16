@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import axios from "axios";
 
 export default function Control() {
   const [entradas, setEntradas] = useState([]);
   const [saidas, setSaidas] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [atuador1On, setAtuador1On] = useState(false);
+  const [atuador2On, setAtuador2On] = useState(false);
+  const [esteiraOn, setEsteiraOn] = useState(false);
 
   useEffect(() => {
     const fetchDispositivos = async () => {
@@ -26,6 +30,14 @@ export default function Control() {
         const saidas = dispositivos.filter((d) =>
           d.rawName.startsWith("atuador") || d.rawName === "motor"
         );
+
+        const atuador1 = saidas.find(s => s.rawName === "atuador_1");
+        const atuador2 = saidas.find(s => s.rawName === "atuador_2");
+        const esteira = saidas.find(s => s.rawName === "esteira");
+
+        if (atuador1) setAtuador1On(atuador1.value === "Ativo");
+        if (atuador2) setAtuador2On(atuador2.value === "Ativo");
+        if (esteira) setEsteiraOn(esteira.value === "Ativo");
 
         setEntradas(entradas);
         setSaidas(saidas);
@@ -51,6 +63,25 @@ export default function Control() {
       .replace(/_/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase());
   };
+
+  const handleToggle = async (
+    nome: "Atuador_plastico" | "Atuador_metalico" | "Motor",
+    atual: boolean,
+    setFunc: (v: boolean) => void
+  ) => {
+    try {
+      const novoEstado = !atual;
+      await axios.post("https://r4ft7y62fg.execute-api.us-east-1.amazonaws.com/dispositivos", {
+        dispositivos: {
+          [nome]: novoEstado
+        }
+      });
+      setFunc(novoEstado);
+    } catch (err) {
+      console.error(`Erro ao alternar ${nome}:`, err);
+    }
+  };
+
 
   const renderCards = (data: { title: string; value: string }[]) => (
     <>
@@ -94,6 +125,29 @@ export default function Control() {
       <View style={styles.groupContainer}>
         <Text style={styles.groupTitle}>Saídas</Text>
         {renderCards(saidas)}
+      </View>
+
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity
+          style={[styles.toggleButton, atuador1On ? styles.on : styles.off]}
+          onPress={() => handleToggle("Atuador_plastico", atuador1On, setAtuador1On)}
+        >
+          <Text style={styles.buttonText}>Atuador 1: {atuador1On ? "Ligado" : "Desligado"}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.toggleButton, atuador2On ? styles.on : styles.off]}
+          onPress={() => handleToggle("Atuador_metalico", atuador2On, setAtuador2On)}
+        >
+          <Text style={styles.buttonText}>Atuador 2: {atuador2On ? "Ligado" : "Desligado"}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.toggleButton, esteiraOn ? styles.on : styles.off]}
+          onPress={() => handleToggle("Motor", esteiraOn, setEsteiraOn)}
+        >
+          <Text style={styles.buttonText}>Esteira: {esteiraOn ? "Ligada" : "Desligada"}</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -151,6 +205,27 @@ const styles = StyleSheet.create({
   cardValue: {
     color: "#fff",
     fontSize: 20,
+    fontWeight: "bold",
+  },
+  buttonGroup: {
+    marginBottom: 40,
+    paddingHorizontal: 10,
+    gap: 12,
+  },
+  toggleButton: {
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  on: {
+    backgroundColor: "#228B22",
+  },
+  off: {
+    backgroundColor: "#8B0000",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "bold",
   },
 });
