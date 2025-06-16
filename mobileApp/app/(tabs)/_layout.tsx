@@ -1,0 +1,43 @@
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+export default function Layout() {
+  return (
+    <Tabs
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+
+          if (route.name === 'control') {
+            iconName = 'settings';
+          } else if (route.name === 'dashboard') {
+            iconName = 'analytics';
+          } else if (route.name === 'members') {
+            iconName = 'people-circle';
+          } else if (route.name === 'chatbot') {
+            iconName = 'chatbubble';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarStyle: {
+          backgroundColor: '#25292e',
+        },
+        tabBarActiveTintColor: '#fff', 
+        tabBarInactiveTintColor: '#aaa', 
+        headerStyle: {
+          backgroundColor: '#25292e',
+        },
+        headerTitleStyle: {
+          color: '#fff',
+        },
+      })}
+    >
+      <Tabs.Screen name="control" options={{ title: 'Control' }} />
+      <Tabs.Screen name="dashboard" options={{ title: 'Dashboards' }} />
+      <Tabs.Screen name="chatbot" options={{ title: 'Chatbot' }} />
+      <Tabs.Screen name="members" options={{ title: 'Members' }} />
+
+    </Tabs>
+  );
+}
