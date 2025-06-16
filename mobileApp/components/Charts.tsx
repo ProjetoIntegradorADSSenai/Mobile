@@ -28,7 +28,7 @@ const Charts = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://r4ft7y62fg.execute-api.us-east-1.amazonaws.com/');
+      const response = await axios.get('https://r4ft7y62fg.execute-api.us-east-1.amazonaws.com/mobile');
       console.log(response.data);
       
       const tempMetal: Data[] = [];
